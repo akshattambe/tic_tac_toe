@@ -1,0 +1,162 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tic_tac_toe/models/player.dart';
+import 'package:tic_tac_toe/widgets/board.dart';
+import 'package:tic_tac_toe/widgets/status.dart';
+
+class GameScreen extends StatefulWidget {
+  final Player player1;
+  final Player player2;
+
+  const GameScreen({
+    Key? key,
+    required this.player1,
+    required this.player2,
+  }) : super(key: key);
+
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  late List<String> _board;
+  late Player _currentPlayer;
+  Player? _winner;
+  late bool _isDraw;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPlayer = widget.player1;
+    _resetGame();
+  }
+
+  void _resetGame() {
+    setState(() {
+      _board = List.filled(9, '');
+      _currentPlayer = widget.player1;
+      _winner = null;
+      _isDraw = false;
+    });
+  }
+
+  Future<void> _updateScore(Player winner) async {
+    final prefs = await SharedPreferences.getInstance();
+    final score = prefs.getInt(winner.name) ?? 0;
+    await prefs.setInt(winner.name, score + 1);
+  }
+
+  void _handleTap(int index) {
+    if (_board[index] != '' || _winner != null) {
+      return;
+    }
+
+    setState(() {
+      _board[index] = _currentPlayer.symbol;
+      _checkWinner();
+      if (_winner == null) {
+        _currentPlayer =
+            _currentPlayer == widget.player1 ? widget.player2 : widget.player1;
+        _isDraw = !_board.contains('');
+        if (_isDraw) {
+          _showEndDialog('Draw!');
+        }
+      } else {
+        _updateScore(_winner!);
+        _showEndDialog('${_winner!.name} wins!');
+      }
+    });
+  }
+
+  void _checkWinner() {
+    const List<List<int>> winningLines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+      [0, 4, 8], [2, 4, 6] // diagonals
+    ];
+
+    for (var line in winningLines) {
+      String playerSymbol = _board[line[0]];
+      if (playerSymbol != '' &&
+          playerSymbol == _board[line[1]] &&
+          playerSymbol == _board[line[2]]) {
+        _winner =
+            playerSymbol == widget.player1.symbol ? widget.player1 : widget.player2;
+        return;
+      }
+    }
+  }
+
+  void _showEndDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: const Text(
+            'Game Over',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Play Again',
+                style: TextStyle(
+                  color: Colors.blue[800],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetGame();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tic-Tac-Toe'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _resetGame,
+            tooltip: 'Restart Game',
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 30),
+              Status(
+                winner: _winner,
+                isDraw: _isDraw,
+                currentPlayer: _currentPlayer.name,
+              ),
+              const SizedBox(height: 20),
+              Board(
+                board: _board,
+                onTap: _handleTap,
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
