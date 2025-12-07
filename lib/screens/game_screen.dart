@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tic_tac_toe/models/player.dart';
 import 'package:tic_tac_toe/widgets/board.dart';
+import 'package:tic_tac_toe/widgets/info_card.dart';
 import 'package:tic_tac_toe/widgets/status.dart';
 
 class GameScreen extends StatefulWidget {
@@ -40,10 +41,19 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  Future<void> _updateScore(Player winner) async {
+  Future<void> _updateStats() async {
     final prefs = await SharedPreferences.getInstance();
-    final score = prefs.getInt(winner.name) ?? 0;
-    await prefs.setInt(winner.name, score + 1);
+    final gamesPlayed = (prefs.getInt('gamesPlayed') ?? 0) + 1;
+    await prefs.setInt('gamesPlayed', gamesPlayed);
+
+    if (_winner != null) {
+      final winnerSymbol = _winner!.symbol;
+      final wins = (prefs.getInt('${winnerSymbol}_wins') ?? 0) + 1;
+      await prefs.setInt('${winnerSymbol}_wins', wins);
+    } else {
+      final draws = (prefs.getInt('draws') ?? 0) + 1;
+      await prefs.setInt('draws', draws);
+    }
   }
 
   void _handleTap(int index) {
@@ -59,10 +69,11 @@ class _GameScreenState extends State<GameScreen> {
             _currentPlayer == widget.player1 ? widget.player2 : widget.player1;
         _isDraw = !_board.contains('');
         if (_isDraw) {
+          _updateStats();
           _showEndDialog('Draw!');
         }
       } else {
-        _updateScore(_winner!);
+        _updateStats();
         _showEndDialog('${_winner!.name} wins!');
       }
     });
@@ -153,6 +164,7 @@ class _GameScreenState extends State<GameScreen> {
                 onTap: _handleTap,
               ),
               const SizedBox(height: 30),
+              const InfoCard(),
             ],
           ),
         ),
