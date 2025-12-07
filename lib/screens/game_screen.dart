@@ -24,12 +24,27 @@ class _GameScreenState extends State<GameScreen> {
   late Player _currentPlayer;
   Player? _winner;
   late bool _isDraw;
+  int _gamesPlayed = 0;
+  int _xWins = 0;
+  int _oWins = 0;
+  int _draws = 0;
 
   @override
   void initState() {
     super.initState();
     _currentPlayer = widget.player1;
+    _loadStats();
     _resetGame();
+  }
+
+  Future<void> _loadStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _gamesPlayed = prefs.getInt('gamesPlayed') ?? 0;
+      _xWins = prefs.getInt('X_wins') ?? 0;
+      _oWins = prefs.getInt('O_wins') ?? 0;
+      _draws = prefs.getInt('draws') ?? 0;
+    });
   }
 
   void _resetGame() {
@@ -39,21 +54,28 @@ class _GameScreenState extends State<GameScreen> {
       _winner = null;
       _isDraw = false;
     });
+    _loadStats();
   }
 
   Future<void> _updateStats() async {
     final prefs = await SharedPreferences.getInstance();
-    final gamesPlayed = (prefs.getInt('gamesPlayed') ?? 0) + 1;
+    final gamesPlayed = (_gamesPlayed) + 1;
     await prefs.setInt('gamesPlayed', gamesPlayed);
 
     if (_winner != null) {
       final winnerSymbol = _winner!.symbol;
-      final wins = (prefs.getInt('${winnerSymbol}_wins') ?? 0) + 1;
-      await prefs.setInt('${winnerSymbol}_wins', wins);
+      if (winnerSymbol == 'X') {
+        final wins = (_xWins) + 1;
+        await prefs.setInt('X_wins', wins);
+      } else {
+        final wins = (_oWins) + 1;
+        await prefs.setInt('O_wins', wins);
+      }
     } else {
-      final draws = (prefs.getInt('draws') ?? 0) + 1;
+      final draws = (_draws) + 1;
       await prefs.setInt('draws', draws);
     }
+    _loadStats();
   }
 
   void _handleTap(int index) {
@@ -164,7 +186,12 @@ class _GameScreenState extends State<GameScreen> {
                 onTap: _handleTap,
               ),
               const SizedBox(height: 30),
-              const InfoCard(),
+              InfoCard(
+                gamesPlayed: _gamesPlayed,
+                xWins: _xWins,
+                oWins: _oWins,
+                draws: _draws,
+              ),
             ],
           ),
         ),

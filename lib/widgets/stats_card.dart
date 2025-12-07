@@ -1,39 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class StatsCard extends StatefulWidget {
+class StatsCard extends StatelessWidget {
   final VoidCallback onToggle;
+  final int gamesPlayed;
+  final int xWins;
+  final int oWins;
+  final int draws;
 
   const StatsCard({
     Key? key,
     required this.onToggle,
+    required this.gamesPlayed,
+    required this.xWins,
+    required this.oWins,
+    required this.draws,
   }) : super(key: key);
-
-  @override
-  _StatsCardState createState() => _StatsCardState();
-}
-
-class _StatsCardState extends State<StatsCard> {
-  int _gamesPlayed = 0;
-  int _xWins = 0;
-  int _oWins = 0;
-  int _draws = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
-
-  Future<void> _loadStats() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _gamesPlayed = prefs.getInt('gamesPlayed') ?? 0;
-      _xWins = prefs.getInt('X_wins') ?? 0;
-      _oWins = prefs.getInt('O_wins') ?? 0;
-      _draws = prefs.getInt('draws') ?? 0;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,25 +36,16 @@ class _StatsCardState extends State<StatsCard> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                Text('Games: $_gamesPlayed'),
-                Text('X Wins: $_xWins'),
-                Text('O Wins: $_oWins'),
-                Text('Draws: $_draws'),
+                Text('Games: $gamesPlayed'),
+                Text('X Wins: $xWins'),
+                Text('O Wins: $oWins'),
+                Text('Draws: $draws'),
               ],
             ),
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: _loadStats,
-                  tooltip: 'Refresh Stats',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.lightbulb_outline),
-                  onPressed: widget.onToggle,
-                  tooltip: 'Show Tip of the Day',
-                ),
-              ],
+            IconButton(
+              icon: const Icon(Icons.lightbulb_outline),
+              onPressed: onToggle,
+              tooltip: 'Show Tip of the Day',
             ),
           ],
         ),
