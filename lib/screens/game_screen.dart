@@ -159,6 +159,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Tic-Tac-Toe'),
         actions: [
@@ -171,28 +172,34 @@ class _GameScreenState extends State<GameScreen> {
       ),
       body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 30),
-              Status(
-                winner: _winner,
-                isDraw: _isDraw,
-                currentPlayer: _currentPlayer.name,
+          child: Card(
+            margin: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 30),
+                  Status(
+                    winner: _winner,
+                    isDraw: _isDraw,
+                    currentPlayer: _currentPlayer.name,
+                  ),
+                  const SizedBox(height: 20),
+                  Board(
+                    board: _board,
+                    onTap: _handleTap,
+                  ),
+                  const SizedBox(height: 30),
+                  InfoCard(
+                    gamesPlayed: _gamesPlayed,
+                    xWins: _xWins,
+                    oWins: _oWins,
+                    draws: _draws,
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              Board(
-                board: _board,
-                onTap: _handleTap,
-              ),
-              const SizedBox(height: 30),
-              InfoCard(
-                gamesPlayed: _gamesPlayed,
-                xWins: _xWins,
-                oWins: _oWins,
-                draws: _draws,
-              ),
-            ],
+            ),
           ),
         ),
       ),

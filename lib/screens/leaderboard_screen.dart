@@ -32,6 +32,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton(
         onPressed: _loadScores,
         tooltip: 'Refresh Scores',
@@ -41,16 +42,19 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ? const Center(
               child: Text('No scores yet!'),
             )
-          : ListView.builder(
-              itemCount: _scores.length,
-              itemBuilder: (context, index) {
-                final playerName = _scores.keys.elementAt(index);
-                final score = _scores[playerName];
-                return ListTile(
-                  title: Text(playerName),
-                  trailing: Text(score.toString()),
-                );
-              },
+          : Card(
+              margin: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+                itemCount: _scores.length,
+                itemBuilder: (context, index) {
+                  final playerName = _scores.keys.elementAt(index);
+                  final score = _scores[playerName];
+                  return ListTile(
+                    title: Text(playerName),
+                    trailing: Text(score.toString()),
+                  );
+                },
+              ),
             ),
     );
   }
