@@ -1,55 +1,77 @@
 import 'package:flutter/material.dart';
 
 class StatsCard extends StatelessWidget {
-  final VoidCallback onToggle;
   final int gamesPlayed;
   final int xWins;
   final int oWins;
   final int draws;
+  final VoidCallback onToggle;
 
   const StatsCard({
     Key? key,
-    required this.onToggle,
     required this.gamesPlayed,
     required this.xWins,
     required this.oWins,
     required this.draws,
+    required this.onToggle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'CUMULATIVE STATS',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
-                const SizedBox(height: 8.0),
-                Text('Games: $gamesPlayed'),
-                Text('X Wins: $xWins'),
-                Text('O Wins: $oWins'),
-                Text('Draws: $draws'),
+                IconButton(
+                  icon: const Icon(Icons.lightbulb_outline),
+                  onPressed: onToggle,
+                  tooltip: 'Show Tip of the Day',
+                ),
               ],
             ),
-            IconButton(
-              icon: const Icon(Icons.lightbulb_outline),
-              onPressed: onToggle,
-              tooltip: 'Show Tip of the Day',
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatItem(context, 'Games', gamesPlayed),
+                _buildStatItem(context, 'X Wins', xWins),
+                _buildStatItem(context, 'O Wins', oWins),
+                _buildStatItem(context, 'Draws', draws),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, String label, int value) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          value.toString(),
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+      ],
     );
   }
 }

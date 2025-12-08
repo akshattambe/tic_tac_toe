@@ -53,10 +53,12 @@ class WallpaperService {
       throw Exception('Could not decode image');
     }
 
-    // Blur, desaturate, and dim the image
+    // Blur and desaturate the image
     img.gaussianBlur(image, 10);
     img.grayscale(image);
-    img.adjustColor(image, brightness: 0.8);
+
+    // Dim the image by drawing a semi-transparent black rectangle over it
+    img.fillRect(image, 0, 0, image.width, image.height, 0x80000000);
 
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/custom_wallpaper.png';

@@ -13,10 +13,13 @@ class MainScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Tic-Tac-Toe'),
+          title: Text(
+            'Tic-Tac-Toe',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.palette),
+              icon: const Icon(Icons.palette_outlined),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -28,11 +31,13 @@ class MainScreen extends StatelessWidget {
               tooltip: 'Theme & Wallpaper',
             ),
           ],
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            tabs: const [
               Tab(text: 'Game'),
               Tab(text: 'Leaderboard'),
             ],
+            labelStyle: Theme.of(context).textTheme.bodyMedium,
+            indicatorColor: Theme.of(context).primaryColor,
           ),
         ),
         body: const TabBarView(

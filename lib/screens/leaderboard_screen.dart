@@ -22,7 +22,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     final keys = prefs.getKeys();
     final scores = <String, int>{};
     for (String key in keys) {
-      scores[key] = prefs.getInt(key) ?? 0;
+      if (key != 'gamesPlayed' &&
+          key != 'X_wins' &&
+          key != 'O_wins' &&
+          key != 'draws' &&
+          key != 'selected_wallpaper') {
+        scores[key] = prefs.getInt(key) ?? 0;
+      }
     }
     setState(() {
       _scores = scores;
@@ -32,28 +38,43 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton(
         onPressed: _loadScores,
         tooltip: 'Refresh Scores',
         child: const Icon(Icons.refresh),
       ),
       body: _scores.isEmpty
-          ? const Center(
-              child: Text('No scores yet!'),
+          ? Center(
+              child: Text(
+                'No scores yet!',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             )
-          : Card(
-              margin: const EdgeInsets.all(16.0),
-              child: ListView.builder(
-                itemCount: _scores.length,
-                itemBuilder: (context, index) {
-                  final playerName = _scores.keys.elementAt(index);
-                  final score = _scores[playerName];
-                  return ListTile(
-                    title: Text(playerName),
-                    trailing: Text(score.toString()),
-                  );
-                },
+          : Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Card(
+                elevation: 4.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: ListView.separated(
+                  itemCount: _scores.length,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final playerName = _scores.keys.elementAt(index);
+                    final score = _scores[playerName];
+                    return ListTile(
+                      title: Text(
+                        playerName,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      trailing: Text(
+                        score.toString(),
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
     );

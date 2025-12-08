@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/screens/main_screen.dart';
+import 'package:tic_tac_toe/theme/theme.dart';
 import 'package:tic_tac_toe/widgets/wallpaper.dart';
 
 void main() {
@@ -13,15 +14,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tic-Tac-Toe',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.blue[800],
-          elevation: 0,
-        ),
-      ),
-      home: const Wallpaper(child: MainScreen()),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      builder: (context, child) {
+        return Wallpaper(child: child!);
+      },
+      home: const MainScreen(),
     );
   }
 }

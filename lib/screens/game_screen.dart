@@ -129,22 +129,17 @@ class _GameScreenState extends State<GameScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          title: const Text(
+          title: Text(
             'Game Over',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
-          content: Text(message),
+          content: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                'Play Again',
-                style: TextStyle(
-                  color: Colors.blue[800],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Text('Play Again'),
               onPressed: () {
                 Navigator.of(context).pop();
                 _resetGame();
@@ -161,45 +156,42 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Tic-Tac-Toe'),
+        title: Text(
+          'Tic-Tac-Toe',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_outlined),
             onPressed: _resetGame,
             tooltip: 'Restart Game',
           )
         ],
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Card(
-            margin: const EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 30),
-                  Status(
-                    winner: _winner,
-                    isDraw: _isDraw,
-                    currentPlayer: _currentPlayer.name,
-                  ),
-                  const SizedBox(height: 20),
-                  Board(
-                    board: _board,
-                    onTap: _handleTap,
-                  ),
-                  const SizedBox(height: 30),
-                  InfoCard(
-                    gamesPlayed: _gamesPlayed,
-                    xWins: _xWins,
-                    oWins: _oWins,
-                    draws: _draws,
-                  ),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Status(
+                winner: _winner,
+                isDraw: _isDraw,
+                currentPlayer: _currentPlayer.name,
               ),
-            ),
+              const SizedBox(height: 32.0),
+              Board(
+                board: _board,
+                onTap: _handleTap,
+              ),
+              const SizedBox(height: 32.0),
+              InfoCard(
+                gamesPlayed: _gamesPlayed,
+                xWins: _xWins,
+                oWins: _oWins,
+                draws: _draws,
+              ),
+            ],
           ),
         ),
       ),

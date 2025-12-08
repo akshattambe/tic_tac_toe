@@ -23,32 +23,34 @@ class TipOfTheDay extends StatelessWidget {
     final random = Random();
     final tip = _tips[random.nextInt(_tips.length)];
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'TIP OF THE DAY',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(tip),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'TIP OF THE DAY',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.lightbulb),
+                  onPressed: onToggle,
+                  tooltip: 'Show Stats',
+                ),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.lightbulb),
-              onPressed: onToggle,
-              tooltip: 'Show Stats',
+            const SizedBox(height: 16.0),
+            Text(
+              tip,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
